@@ -1,26 +1,41 @@
-function ChaZD(queryWord, useHttps, wordSource, sendResponse) {
+//var dict = dictionaries[currDictIndex];
+
+function ChaZD(currDictIndex,queryWord, useHttps, wordSource, sendResponse) {
     this.wordSource = wordSource;
     this.useHttps = useHttps;
-    var url = (useHttps ? urls.dictHttps : urls.dict) + queryWord;
-    //console.log("Query url: " + url);
+//  console.info("currDictIndex:"+currDictIndex+",DICNAME:"+dictionaries[0].name);
+    this.dictionary = dictionaries[currDictIndex];
     var queryResult = {};
     var self = this;
     var xhr = new XMLHttpRequest();
-
+    var url = (useHttps ? this.dictionary.urls.dictHttps : this.dictionary.urls.dict) + queryWord;
     xhr.open("GET", url, true);
     xhr.onreadystatechange = function() {
-        if (xhr.readyState != 4) {return;}
+      if (xhr.readyState != 4) {return;}
+     // alert(xhr.responseText);
+      //if(currDictIndex==1){
+        var res = JSON.parse(xhr.responseText);
+        console.info(res.symbols);
+      //}
         var result = JSON.parse(xhr.responseText);
 
         if (queryWord.indexOf("-") !== -1 && !self.checkErrorCode(result.errorCode).error && !self.haveTranslation(result)) {
             //优化使用连字符的词的查询结果
             new ChaZD(queryWord.replace(/-/g, " "), useHttps, wordSource, sendResponse);
         } else {
-            var resultObj = self.parseResult.call(self, result);
-            sendResponse(resultObj);
+          var resultObj;
+          if(currDictIndex===0){
+            resultObj = self.parseResult.call(self, result);
+          }
+          else{
+            resultObj = result;
+          }
+          console.info("ChaZD,resultObj:");
+          console.info(resultObj);
+          sendResponse(resultObj);
         }
     };
-    xhr.send();
+   xhr.send();
 }
 
 ChaZD.prototype.checkErrorCode = function (errorCode) {
@@ -160,7 +175,7 @@ ChaZD.prototype.parseBasicPhonetic = function (basic, queryWord) {
 };
 
 ChaZD.prototype.initVoice = function (queryWord, type) {
-    var src = (this.useHttps ? urls.voiceHttps : urls.voice) + queryWord;
+    var src = (this.useHttps ? this.dictionary.urls.voiceHttps : this.dictionary.urls.voice) + queryWord;
     if(type !== undefined) {
         src = src + "&type=" + type;
     }
@@ -346,7 +361,7 @@ chrome.runtime.onMessage.addListener(
     function (message, sender, sendResponse) {
         //console.log("message from sender:" + JSON.stringify(message));
         //console.log("sender is " + JSON.stringify(sender));
-        new ChaZD(preprocessWord(message.queryWord), message.useHttps, message.source, sendResponse);
+      new ChaZD(message.currDictIndex,preprocessWord(message.queryWord), message.useHttps, message.source, sendResponse);
 
         return true;
 });

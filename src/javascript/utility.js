@@ -1,16 +1,37 @@
-var api = {
-    key: 1116151381,
-    keyfrom : "youdaocidian"
-};
+//var urls = {
+//    dict : "http://fanyi.youdao.com/openapi.do?keyfrom=chayachazidian&key=2087770471&type=data&doctype=json&version=1.1&q=",
+//    voice : "http://dict.youdao.com/dictvoice?audio=",
+//    dictHttps : "https://fanyi.youdao.com/openapi.do?keyfrom=chayachazidian&key=2087770471&type=data&doctype=json&version=1.1&q=",
+//    voiceHttps : "https://dict.youdao.com/dictvoice?audio=",
+//};
 
-var urls = {
-    dict : "http://fanyi.youdao.com/openapi.do?keyfrom=" + api.keyfrom +"&key="+ api.key +"&type=data&doctype=json&version=1.1&q=",
-    voice : "http://dict.youdao.com/dictvoice?audio=",
-    dictHttps : "https://fanyi.youdao.com/openapi.do?keyfrom=" + api.keyfrom +"&key="+ api.key +"&type=data&doctype=json&version=1.1&q=",
-    voiceHttps : "https://dict.youdao.com/dictvoice?audio=",
-};
+//var currDictIndex = 0;
+
+var dictionaries = [
+  {
+    name : "youdao",
+    img : "http://www.youdao.com/help/fanyiapi/brand/002.gif",
+    urls :  {
+      dict : "http://fanyi.youdao.com/openapi.do?keyfrom=chayachazidian&key=2087770471&type=data&doctype=json&version=1.1&q=",
+      voice : "http://dict.youdao.com/dictvoice?audio=",
+      dictHttps : "https://fanyi.youdao.com/openapi.do?keyfrom=chayachazidian&key=2087770471&type=data&doctype=json&version=1.1&q=",
+      voiceHttps : "https://dict.youdao.com/dictvoice?audio=",
+    }
+  },
+  {
+    name: " Glosbe",
+    img : "https://ss0.bdstatic.com/5aV1bjqh_Q23odCf/static/superman/img/logo/bd_logo1_31bdc765.png",
+    urls :{
+      dict : "http://dict-co.iciba.com/api/dictionary.php?key=89AB811B0BB16FCB241EAC053B2A19E7&type=json&w=",
+      voice : "http://dict.youdao.com/dictvoice?audio=",
+      dictHttps : "http://dict-co.iciba.com/api/dictionary.php?key=89AB811B0BB16FCB241EAC053B2A19E7&type=json&w=",
+      voiceHttps : "https://dict.youdao.com/dictvoice?audio=",
+    }
+  }
+];
 
 var settings = {
+    dictIndex : 0,
     selectMode : "mouseSelect",     //划词的形式：直接划词 or Ctrl + 划词
     showPosition : "near",          //划词翻译结果显示的位置
     toggleKey : "ctrl",
@@ -66,9 +87,9 @@ function isEmpty(obj) {
 function fmt() {
     var args = arguments;
     return args[0].replace(/#{(.*?)}/g, function (match, prop) {
-        return function (obj, props) {
-            var prop = /\d+/.test(props[0]) ? parseInt(props[0]) : props[0];
-            if (props.length > 1) {
+      return function (obj, props) {
+        var prop = /\d+/.test(props[0]) ? parseInt(props[0]) : props[0];
+        if (props.length > 1) {
                 return arguments.callee(obj[prop], props.slice(1));
             } else {
                 return obj[prop];

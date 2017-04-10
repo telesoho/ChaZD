@@ -10,6 +10,7 @@ if (-1 !== window.navigator.platform.toLowerCase().indexOf("mac")) {
 //     $tipsContainer.classList.add("unshow");
 // }
 
+var currDictIndex = 0;
 
 function queryInPopup(queryText) {
     //$input.select();
@@ -20,16 +21,31 @@ function queryInPopup(queryText) {
         $queryResultContainer.innerHTML = "ψ(._. )>词典君正在翻译。。。";
     }
     //console.log("input value: " + $input.value);
-    //console.log("quertText: " + queryText);
+  //console.log("quertText: " + queryText);
+  var callback;
+  if(currDictIndex===0){
+    callback = buildResult;
+    console.info("callback is buildResult");
+  }
+  else{
+    callback = buildResult4iciba;
+    console.info("callback is 4iciba");
+  }
+  console.info(callback);
     if (queryText) {
         $input.value = queryText;
-        chrome.extension.sendMessage({queryWord: queryText, source: "popup", useHttps: useHttpsValue}, buildResult);
+      chrome.extension.sendMessage({queryWord: queryText, source: "popup", useHttps: useHttpsValue,currDictIndex:currDictIndex}, callback);
     }
     else {
-        chrome.extension.sendMessage({queryWord: $input.value, source: "popup", useHttps: useHttpsValue}, buildResult);
+        chrome.extension.sendMessage({queryWord: $input.value, source: "popup", useHttps: useHttpsValue,currDictIndex:currDictIndex}, callback);
     }
 }
 
+var buildResult4iciba = function(response){
+//  $queryResultContainer.innerHTML = response;
+  console.info("4iciba,response:");
+  console.info(response);
+};
 var buildResult = function(response) {
     //alert("response from xhr: " + JSON.stringify(response));
     var resultObj = response;
@@ -148,8 +164,9 @@ var tips = document.querySelector("#tips");
 var toggleKey = document.querySelector("#toggle-key");
 var useHttps = document.querySelector("#useHttps");
 var useHttpsValue = false;
+var dictionaryType = document.querySelector("#dictionary-type");
 
-chrome.storage.sync.get(null, function (items) { 
+chrome.storage.sync.get(null, function (items) {
     if(items.currentWord !== "") {
         queryInPopup(items.currentWord);
     }
@@ -257,6 +274,17 @@ useHttps.addEventListener("click", function (event) {
     chrome.storage.sync.set({"useHttps": currentUseHttps});
 });
 
+dictionaryType.addEventListener("click", function(event){
+  chrome.storage.sync.get({"dictIndex":0},function(result){
+    currDictIndex = (result.dictIndex + 1) % dictionaries.length;
+        console.info("before:"+result.dictIndex+", now:"+currDictIndex);
+    dictionaryType.src = dictionaries[currDictIndex].img;
+    chrome.storage.sync.set({"dictIndex": currDictIndex},function(items){
+      
+    });
+  });
+});
+
 autoAudio.addEventListener("click", function (event) {
     var currentAutoAudio = autoAudio.checked;
     if (currentAutoAudio) {
@@ -331,7 +359,7 @@ useCtrl.addEventListener("click", function (event) {
 });
 
 showPositionSide.addEventListener("click", function (event) {
-    showPositionSide.nextSibling.classList.remove("unactive");
+    showPositionSide.nextSibling.classLisT.remove("unactive");
     showPositionNear.nextSibling.classList.add("unactive");
     chrome.storage.sync.set({"showPosition" : "side"}, function() {
         //console.log("[ChaZD] Success update settings showPosition = side");
