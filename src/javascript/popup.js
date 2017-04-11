@@ -42,13 +42,48 @@ function queryInPopup(queryText) {
 }
 
 var buildResult4iciba = function(response){
-//  $queryResultContainer.innerHTML = response;
-  console.info("4iciba,response:");
+  /*jshint camelcase: false */
+//  console.info("4iciba,response:");
   console.info(response);
+  var resultObj = response;
+  var titleWord = resultObj.word_name;
+  var symbol = resultObj.symbols[0];
+  var parts = symbol.parts;
+  var firstTranslation = parts[0].means[0];
+  
+  var titleBlock = "<div class=\"title-container \"><div class=\"title-word\">" + titleWord + "<div class=\"voice-container\" data-src=\""+ symbol.ph_am_mp3 +"\" title=\"真人发音\" ></div></div><div class=\"title-translation\" title=\"结果来自iciba\">" + firstTranslation + "</div></div>";
+
+  var basicBlock = "<div class=\"basic-container\"><div class=\"phonetic-container\"><div class=\"uk-phonetic-container\">[" + symbol.ph_en + "]<div class=\"voice-container\" data-src=\"" + symbol.ph_en_mp3 + "\" title=\"英音\" ></div></div><div class=\"us-phonetic-container\">[" + symbol.ph_am + "]<div class=\"voice-container\" data-src=\""+ symbol.ph_am_mp3 + "\" title=\"美音\" ></div></div></div><div class=\"explains-container\"><ul class=\"explains-list\">";
+  var i = 0;
+  for(i = 0; i < parts.length; i++){
+    var li = "<li class=\"explains-item\"> <b class=\"property-container\" title=\"名词\">" + parts[i].part + "</b> <span class=\"explains-item-value\"> ";
+    var means = parts[i].means;
+    var j = 0;
+    for(j = 0; j < means.length; j++){
+      li += means[j];
+      if(j != means.lenth){
+        li += ";";
+      }
+    }
+    li += "</span></li>";
+    basicBlock += li;
+  }
+  basicBlock += " </ul></div></div>";
+  var youdaoFormattedObj = {
+    haveWebTranslation : false,
+    titleBlock : titleBlock,
+    basicBlock : basicBlock,
+    validMessage : "query success",
+    webBlock : "<div class=\"web-explains-container\"></div>"
+  };
+  buildResult(youdaoFormattedObj);
+  //$queryResultContainer.innerHTML = titleContainer + basicContainer;
+  
 };
 var buildResult = function(response) {
     //alert("response from xhr: " + JSON.stringify(response));
-    var resultObj = response;
+  var resultObj = response;
+  console.info(resultObj);
     var resultBlock = "";
     if (resultObj.validMessage == "query success") {
         resultBlock += resultObj.titleBlock;
