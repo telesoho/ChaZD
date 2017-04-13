@@ -1,9 +1,8 @@
-//var dict = dictionaries[currDictIndex];
+
 
 function ChaZD(currDictIndex,queryWord, useHttps, wordSource, sendResponse) {
     this.wordSource = wordSource;
     this.useHttps = useHttps;
-//  console.info("currDictIndex:"+currDictIndex+",DICNAME:"+dictionaries[0].name);
     this.dictionary = dictionaries[currDictIndex];
     var queryResult = {};
     var self = this;
@@ -12,13 +11,9 @@ function ChaZD(currDictIndex,queryWord, useHttps, wordSource, sendResponse) {
     xhr.open("GET", url, true);
     xhr.onreadystatechange = function() {
       if (xhr.readyState != 4) {return;}
-     // alert(xhr.responseText);
-      //if(currDictIndex==1){
-        var res = JSON.parse(xhr.responseText);
-        console.info(res.symbols);
-      //}
+       // alert(xhr.responseText);
         var result = JSON.parse(xhr.responseText);
-
+      console.info(result);
         if (queryWord.indexOf("-") !== -1 && !self.checkErrorCode(result.errorCode).error && !self.haveTranslation(result)) {
             //优化使用连字符的词的查询结果
             new ChaZD(queryWord.replace(/-/g, " "), useHttps, wordSource, sendResponse);
@@ -30,8 +25,6 @@ function ChaZD(currDictIndex,queryWord, useHttps, wordSource, sendResponse) {
           else{
             resultObj = result;
           }
-          console.info("ChaZD,resultObj:");
-          console.info(resultObj);
           sendResponse(resultObj);
         }
     };

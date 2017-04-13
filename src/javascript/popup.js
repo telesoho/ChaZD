@@ -11,7 +11,12 @@ if (-1 !== window.navigator.platform.toLowerCase().indexOf("mac")) {
 // }
 
 var currDictIndex = 0;
+chrome.storage.sync.get({"dictIndex":0,"dictionaries":null},function(result){
+  currDictIndex = result.dictIndex;
+  dictionaryType.src = result.dictionaries[currDictIndex].img;
+});
 
+  
 function queryInPopup(queryText) {
     //$input.select();
     if ($queryResultContainer.classList.contains("unshow")){
@@ -25,13 +30,10 @@ function queryInPopup(queryText) {
   var callback;
   if(currDictIndex===0){
     callback = buildResult;
-    console.info("callback is buildResult");
   }
   else{
     callback = buildResult4iciba;
-    console.info("callback is 4iciba");
   }
-  console.info(callback);
     if (queryText) {
         $input.value = queryText;
       chrome.extension.sendMessage({queryWord: queryText, source: "popup", useHttps: useHttpsValue,currDictIndex:currDictIndex}, callback);
@@ -43,8 +45,6 @@ function queryInPopup(queryText) {
 
 var buildResult4iciba = function(response){
   /*jshint camelcase: false */
-//  console.info("4iciba,response:");
-  console.info(response);
   var resultObj = response;
   var titleWord = resultObj.word_name;
   var symbol = resultObj.symbols[0];
@@ -83,7 +83,6 @@ var buildResult4iciba = function(response){
 var buildResult = function(response) {
     //alert("response from xhr: " + JSON.stringify(response));
   var resultObj = response;
-  console.info(resultObj);
     var resultBlock = "";
     if (resultObj.validMessage == "query success") {
         resultBlock += resultObj.titleBlock;
@@ -310,10 +309,9 @@ useHttps.addEventListener("click", function (event) {
 });
 
 dictionaryType.addEventListener("click", function(event){
-  chrome.storage.sync.get({"dictIndex":0},function(result){
-    currDictIndex = (result.dictIndex + 1) % dictionaries.length;
-        console.info("before:"+result.dictIndex+", now:"+currDictIndex);
-    dictionaryType.src = dictionaries[currDictIndex].img;
+  chrome.storage.sync.get({"dictIndex":0,"dictionaries":null},function(result){
+    currDictIndex = (result.dictIndex + 1) % result.dictionaries.length;
+    dictionaryType.src = result.dictionaries[currDictIndex].img;
     chrome.storage.sync.set({"dictIndex": currDictIndex},function(items){
       
     });

@@ -31,7 +31,8 @@ var dictionaries = [
 ];
 
 var settings = {
-    dictIndex : 0,
+  dictIndex : 0,
+  dictionaries: dictionaries,
     selectMode : "mouseSelect",     //划词的形式：直接划词 or Ctrl + 划词
     showPosition : "near",          //划词翻译结果显示的位置
     toggleKey : "ctrl",

@@ -9,10 +9,13 @@
 
     var timeout;
     var currentSettings = {};
+    var currDictIndex = 0;
     chrome.storage.sync.get(null, function(items) {
         for (var key in items) {
             currentSettings[key] = items[key];
         }
+        currDictIndex = currentSettings.dictIndex;
+      //console.info("currentSettings[\"dictIndex\"]="+currentSettings["dictIndex"]+",name:"+currentSettings["dictionaries"][currentSettings["dictIndex"]].name);
     });
 
     chrome.storage.onChanged.addListener(function(changes) {
@@ -118,7 +121,6 @@
                 height: 15
             };
         }
-
         var containerWidth = resultNearContainer.offsetWidth;
         //var arrowWidth = arrowMain.width();
         var rangeWidth = range.right - range.left;
@@ -225,14 +227,13 @@
         chrome.runtime.sendMessage({
             queryWord: text,
             source: "select",
-            useHttps: useHttps
+          useHttps: useHttps,
+          currDictIndex: currDictIndex
         }, function(response) {
             var resultObj = response;
             $searchingNode.innerHTML = "";
             if (resultObj.validMessage === "query success") {
-
                 $resultContainer.innerHTML = resultObj.titleBlock;
-
                 var singleVoiceButton = $resultContainer.querySelector(".voice-container");
                 buildVoice(singleVoiceButton);
                 
@@ -241,8 +242,18 @@
                 
                 var temp = document.createElement("div");
                 if (resultObj.basicBlock) {
-                    temp.innerHTML = resultObj.basicBlock;
-                    $resultContainer.appendChild(temp);
+                  temp.innerHTML = resultObj.basicBlock;
+                  //alert(resultObj.basicBlock);
+//                    var footer = "<footer> <div class=\"setting-button link\" id=\"setting-button\" title=\"设置\"></div> Powered By <span id=\"dictionary-type\">youdao<span> </footer>";
+//                  var dictionaryType = document.querySelector("#dictionary-type");
+  //                dictionaryType.addEventListener("click", function(event){
+    //                chrome.storage.sync.get({"dictIndex":0,"dictionaries":null},function(result){
+//                      currDictIndex = (result.dictIndex + 1) % result.dictionaries.length;
+  //                    dictionaryType.src = result.dictionaries[currDictIndex].img;
+    //                  chrome.storage.sync.set({"dictIndex": currDictIndex},function(items){});
+      //              });
+        //          });
+                $resultContainer.appendChild(temp);
                 }
                 else if (resultObj.haveTranslation) {
                     $resultContainer.querySelector(".title-translation").style.display = "block";
@@ -263,7 +274,6 @@
                 }                
             }
         });
-
         return $resultContainer;
     };
 
