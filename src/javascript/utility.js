@@ -19,8 +19,8 @@ var dictionaries = [
     }
   },
   {
-    name: " Glosbe",
-    img : "https://ss0.bdstatic.com/5aV1bjqh_Q23odCf/static/superman/img/logo/bd_logo1_31bdc765.png",
+    name: "iciba",
+    img : "http://open.iciba.com/doc/huayi/img/hy_logo.gif",
     urls :{
       dict : "http://dict-co.iciba.com/api/dictionary.php?key=89AB811B0BB16FCB241EAC053B2A19E7&type=json&w=",
       voice : "http://dict.youdao.com/dictvoice?audio=",
