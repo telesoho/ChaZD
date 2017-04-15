@@ -228,7 +228,7 @@
             queryWord: text,
             source: "select",
           useHttps: useHttps,
-          currDictIndex: currDictIndex
+          currDictIndex: 0
         }, function(response) {
             var resultObj = response;
             $searchingNode.innerHTML = "";
@@ -243,17 +243,7 @@
                 var temp = document.createElement("div");
                 if (resultObj.basicBlock) {
                   temp.innerHTML = resultObj.basicBlock;
-                  //alert(resultObj.basicBlock);
-//                    var footer = "<footer> <div class=\"setting-button link\" id=\"setting-button\" title=\"设置\"></div> Powered By <span id=\"dictionary-type\">youdao<span> </footer>";
-//                  var dictionaryType = document.querySelector("#dictionary-type");
-  //                dictionaryType.addEventListener("click", function(event){
-    //                chrome.storage.sync.get({"dictIndex":0,"dictionaries":null},function(result){
-//                      currDictIndex = (result.dictIndex + 1) % result.dictionaries.length;
-  //                    dictionaryType.src = result.dictionaries[currDictIndex].img;
-    //                  chrome.storage.sync.set({"dictIndex": currDictIndex},function(items){});
-      //              });
-        //          });
-                $resultContainer.appendChild(temp);
+                  $resultContainer.appendChild(temp);
                 }
                 else if (resultObj.haveTranslation) {
                     $resultContainer.querySelector(".title-translation").style.display = "block";

@@ -1,5 +1,4 @@
 
-
 function ChaZD(currDictIndex,queryWord, useHttps, wordSource, sendResponse) {
     this.wordSource = wordSource;
     this.useHttps = useHttps;
